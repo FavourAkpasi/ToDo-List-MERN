@@ -35,9 +35,27 @@ router.post("/register", async (req, res) => {
       password: await bcrypt.hash(req.body.password, 12),
       name: req.body.name,
     });
+
+    // save new user and log them in with cookies
+
     const savedUser = await newUser.save();
+
+    const payload = { userId: savedUser._id };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    res.cookie("accessToken", token, {
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+
     const returnedUser = { ...savedUser._doc };
+
     delete returnedUser.password;
+
     return res.json(returnedUser);
   } catch (error) {
     console.log(error);
@@ -54,24 +72,32 @@ router.post("/login", async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: "invalid login credentials" });
     }
+
     const matchPassword = await bcrypt.compare(
       req.body.password,
       user.password
     );
+
     if (!matchPassword) {
       return res.status(400).json({ error: "invalid login credentials" });
     }
+
     const payload = { userId: user._id };
+
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
+
     res.cookie("accessToken", token, {
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
     });
+
     const returnedUser = { ...user._doc };
+
     delete returnedUser.password;
+
     return res.json({ token: token, user: returnedUser });
   } catch (error) {
     console.log(error);
@@ -84,6 +110,16 @@ router.get("/current", requiresAuth, (req, res) => {
     return res.status(401).send("unauthorised");
   }
   return res.json(req.user);
+});
+
+router.put("/logout", requiresAuth, async (req, res) => {
+  try {
+    res.clearCookie("accessToken");
+    return res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error.message);
+  }
 });
 
 module.exports = router;
