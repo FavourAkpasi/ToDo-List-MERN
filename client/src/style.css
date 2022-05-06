@@ -23,7 +23,7 @@ input {
   height: auto;
   min-height: 500px;
   max-width: 500px;
-  min-width: 250px;
+  min-width: 320px;
   background: #f1f5f8;
   background-image: radial-gradient(#bfc0c1 7.2%, transparent 0);
   background-size: 25px 25px;
@@ -37,6 +37,11 @@ input {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.avatar {
+  position: absolute;
+  left: 0rem;
+  top: 0rem;
 }
 .btn-group {
   position: absolute;
@@ -98,6 +103,10 @@ li {
   width: 100%;
   border-bottom: 1px solid black;
 }
+.todoContainer {
+  max-height: 300px;
+  overflow-y: scroll;
+}
 .loading {
   width: 20%;
   margin-top: 10rem;
@@ -122,4 +131,8 @@ li {
 
 .field {
   margin-top: 1rem;
+}
+
+.footerText {
+  font-size: 0.5rem;
 }

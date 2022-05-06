@@ -45,10 +45,10 @@ export const GlobalProvider = (props) => {
     try {
       const res = await axios.get("/api/auth/current");
       if (res.data) {
-        const tDRes = await axios.get("/api/todos/current");
-        if (tDRes.data) {
+        const toDoRes = await axios.get("/api/todos/current");
+        if (toDoRes.data) {
           dispatch({ type: "SET_USER", payload: res.data });
-          dispatch({ type: "SET_TODOS", payload: tDRes.data.toDos });
+          dispatch({ type: "SET_TODOS", payload: toDoRes.data.toDos });
         }
       } else {
         dispatch({ type: "RESET_USER" });
@@ -76,11 +76,27 @@ export const GlobalProvider = (props) => {
     });
   };
 
+  const updateToDo = () => {
+    dispatch({
+      type: "SET_TODOS",
+      payload: [...state.toDos],
+    });
+  };
+
+  const deleteToDo = (todo) => {
+    dispatch({
+      type: "SET_TODOS",
+      payload: state.toDos.filter((toDo) => toDo._id !== todo._id),
+    });
+  };
+
   const value = {
     ...state,
     getCurrentUser,
     logout,
     addToDo,
+    updateToDo,
+    deleteToDo,
   };
 
   return (

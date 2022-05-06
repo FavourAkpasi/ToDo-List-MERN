@@ -5,17 +5,20 @@ import Zoom from "@mui/material/Zoom";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import RestoreIcon from "@mui/icons-material/Restore";
+import axios from "axios";
+import { useGlobalContext } from "../context/GlobalContext";
 
 function ToDoItem(props) {
+  const { updateToDo, deleteToDo } = useGlobalContext();
   const [checked, setChecked] = useState(false);
+  const [content, setContent] = useState(props.content);
+
+  const [editing, setEditing] = useState(false);
+  const todo = props.todo;
 
   function handleChange() {
     setChecked(!checked);
   }
-
-  const [toDoText, setToDoText] = useState(props.toDo);
-
-  const [editing, setEditing] = useState(false);
 
   function handleEdit(e) {
     e.preventDefault();
@@ -23,12 +26,31 @@ function ToDoItem(props) {
     input.current.focus();
   }
 
-  function cancelEditing(e) {
+  function cancelEdit(e) {
     if (e) {
       e.preventDefault();
-      setEditing(false);
-      setToDoText(props.toDo);
     }
+    setEditing(false);
+    setContent(props.content);
+  }
+
+  function saveEdit(e) {
+    if (e) {
+      e.preventDefault();
+    }
+    axios.put(`/api/todos/${props.id}`, { content }).then((res) => {
+      updateToDo(res.data);
+      setEditing(false);
+    });
+  }
+
+  function handleDelete(e) {
+    if (e) {
+      e.preventDefault();
+    }
+    axios.delete(`/api/todos/${props.id}`).then(() => {
+      deleteToDo(todo);
+    });
   }
 
   const input = React.useRef(null);
@@ -47,10 +69,10 @@ function ToDoItem(props) {
         <input
           type="text"
           ref={input}
-          value={toDoText}
+          value={content}
           readOnly={!editing}
           onChange={(e) => {
-            setToDoText(e.target.value);
+            setContent(e.target.value);
           }}
         />
       </li>
@@ -69,9 +91,7 @@ function ToDoItem(props) {
           <DeleteForeverIcon
             fontSize="small"
             color="error"
-            onClick={() => {
-              props.delete(props._id);
-            }}
+            onClick={handleDelete}
             className="delete"
           />
         </Zoom>
@@ -81,9 +101,7 @@ function ToDoItem(props) {
           <CheckCircleOutlineIcon
             fontSize="small"
             color="success"
-            onClick={() => {
-              props.delete(props._id);
-            }}
+            onClick={saveEdit}
             className="done"
           />
         </Zoom>
@@ -93,7 +111,7 @@ function ToDoItem(props) {
           <RestoreIcon
             fontSize="small"
             color="error"
-            onClick={cancelEditing}
+            onClick={cancelEdit}
             className="undo"
           />
         </Zoom>

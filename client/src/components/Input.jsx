@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import axios from "axios";
-import { GlobalContext, useGlobalContext } from "../context/GlobalContext";
+import { useGlobalContext } from "../context/GlobalContext";
 
 function Input() {
   const { addToDo } = useGlobalContext();
@@ -13,7 +13,6 @@ function Input() {
   }
 
   function handleSubmit(e) {
-    console.log(content);
     e.preventDefault();
     axios.post("/api/todos/new", { content }).then((res) => {
       setContent("");
@@ -33,7 +32,7 @@ function Input() {
       <IconButton
         onClick={handleSubmit}
         variant="outlined"
-        disabled={content == ""}
+        disabled={content === ""}
       >
         <AddCircleRoundedIcon />
       </IconButton>

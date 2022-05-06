@@ -2,10 +2,11 @@ import Button from "@mui/material/Button";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+import Avatar from "@mui/material/Avatar";
 import { Link, useLocation } from "react-router-dom";
 import { useGlobalContext } from "../context/GlobalContext";
 
-function Heading() {
+function Heading(props) {
   const { user, logout } = useGlobalContext();
   const { pathname } = useLocation();
 
@@ -13,6 +14,15 @@ function Heading() {
     <div className="header">
       <div className="heading">
         <h1>To-Do List</h1>
+      </div>
+      <div className="avatar">
+        {user ? (
+          <Avatar
+            sx={{ color: "#555", width: 35, height: 35, fontWeight: "bold" }}
+          >
+            {props.initial}
+          </Avatar>
+        ) : null}
       </div>
       <div className="btn-group">
         {user ? (
