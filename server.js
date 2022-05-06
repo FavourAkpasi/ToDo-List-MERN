@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 
 const authRoute = require("./routes/auth");
 const todosRoute = require("./routes/todos");
@@ -18,8 +19,14 @@ app.get("/api", (req, res) => {
 app.use("/api/auth", authRoute);
 app.use("/api/todos", todosRoute);
 
+app.use(express.static(path.resolve(__dirname, "./client/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
+});
+
 mongoose
-  .connect("mongodb://localhost:27017/ToDoList2DB")
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("connected to the Database");
 

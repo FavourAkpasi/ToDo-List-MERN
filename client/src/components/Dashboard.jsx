@@ -19,7 +19,8 @@ function Dashboard() {
   return (
     <div>
       <div className="container">
-        <Heading initial={user.name[0].toUpperCase()} />
+        {user ? <Heading initial={user.name[0].toUpperCase()} /> : <Heading />}
+
         <Input />
         <div className="todoContainer">
           {toDos.map((toDo) => {
