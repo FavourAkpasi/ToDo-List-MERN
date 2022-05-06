@@ -2,7 +2,7 @@
   "name": "todo-list-mern",
   "version": "1.0.0",
   "description": "A Full stack Todo List App",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "nodemon server.js --ignore client",
